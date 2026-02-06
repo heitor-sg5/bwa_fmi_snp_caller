@@ -1,7 +1,6 @@
 import streamlit as st
 
 def ensure_session_defaults():
-    """Initialize default session state values."""
     st.session_state.setdefault("view", "landing")
     st.session_state.setdefault("results", [])
     st.session_state.setdefault("runtime_bwt", 0)

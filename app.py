@@ -5,7 +5,6 @@ from ui.landing import landing_page
 from ui.workspace import workspace 
 
 def main():
-    """Main application entry point."""
     st.set_page_config(
         page_title="BWA/FM-index SNP Caller",
         layout="wide",
