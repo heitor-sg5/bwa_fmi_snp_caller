@@ -25,11 +25,9 @@ def build_suffix_array(text):
             break
     return sa
 
-def build_bwt(text, sentinel="$"):
+def build_bwt(text, sa, sentinel="$"):
     if sentinel not in text:
         text = text + sentinel
-    sa = build_suffix_array(text)
-    n = len(text)
     bwt_chars = []
     for idx in sa:
         if idx == 0:

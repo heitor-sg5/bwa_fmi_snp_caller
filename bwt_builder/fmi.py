@@ -10,7 +10,7 @@ class FMIndex:
         self.sentinel = sentinel
         self.text = text
         self.sa = build_suffix_array(text)
-        self.bwt = build_bwt(text, sentinel=sentinel)
+        self.bwt = build_bwt(text, self.sa, sentinel=sentinel)
         self.checkpoint_step = checkpoint_step
         self.first_occurrence = self.build_first_occurrence()
         self.checkpoints = self.build_checkpoints()
@@ -71,7 +71,7 @@ class FMIndex:
         for symbol in reversed(pattern):
             if symbol not in self.first_occurrence:
                 return []
-            
+
             top = self.first_occurrence[symbol] + self.count_symbol(symbol, top)
             bottom = self.first_occurrence[symbol] + self.count_symbol(symbol, bottom + 1) - 1
             
