@@ -6,7 +6,6 @@ def call_snps(alignments, reference, min_depth=3, min_alt_frac=0.2):
         for aln in aln_list:
             ref_pos = aln["ref_pos"]
             read_seq = aln["read_seq"]
-            ref_seq = reference[ref_pos:ref_pos + len(read_seq)]
             for i, base in enumerate(read_seq):
                 pileup[ref_pos + i][base] += 1
     snps = []

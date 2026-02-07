@@ -8,7 +8,7 @@ def build_suffix_array(text):
 
     k = 1
     while k < n:
-        def key(i: int) -> tuple[int, int]:
+        def key(i):
             r2 = rank[i + k] if i + k < n else -1
             return (rank[i], r2)
         sa.sort(key=key)
@@ -30,25 +30,10 @@ def build_bwt(text, sentinel="$"):
         text = text + sentinel
     sa = build_suffix_array(text)
     n = len(text)
-    if len(sa) != n:
-        raise ValueError("Suffix array length must match text length.")
-    bwt_chars: list[str] = []
+    bwt_chars = []
     for idx in sa:
         if idx == 0:
             bwt_chars.append(sentinel)
         else:
             bwt_chars.append(text[idx - 1])
     return "".join(bwt_chars)
-
-def inverse_bwt(bwt, sentinel="$"):
-    n = len(bwt)
-    if n == 0:
-        return ""
-    table = [""] * n
-    for _ in range(n):
-        table = [bwt[i] + table[i] for i in range(n)]
-        table.sort()
-    for row in table:
-        if row.endswith(sentinel):
-            return row.removesuffix(sentinel)
-    raise ValueError("Sentinel not found during inverse BWT.")

@@ -30,6 +30,14 @@ class FMIndex:
             counts[c].append((len(self.bwt), total_counts[c]))
         return counts
 
+    def build_first_occurrence(self):
+        first_col = sorted(self.bwt)
+        first_occurrence = {}
+        for i, c in enumerate(first_col):
+            if c not in first_occurrence:
+                first_occurrence[c] = i
+        return first_occurrence
+    
     def count_symbol(self, symbol, pos):
         if symbol not in self.checkpoints:
             return 0
@@ -52,14 +60,6 @@ class FMIndex:
                 count += 1
         
         return count
-
-    def build_first_occurrence(self):
-        first_col = sorted(self.bwt)
-        first_occurrence = {}
-        for i, c in enumerate(first_col):
-            if c not in first_occurrence:
-                first_occurrence[c] = i
-        return first_occurrence
     
     def search_exact(self, pattern):
         if not pattern:
