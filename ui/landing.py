@@ -6,8 +6,8 @@ import time
 from bwt_builder.fmi import FMIndex
 from bwa_mapper.mapping import map_reads 
 from bwa_mapper.snp import call_snps
-from bw_stats.coverage import compute_coverage
-from bw_stats.summary import calculate_snp_stats 
+from stats.coverage import compute_coverage
+from stats.summary import calculate_snp_stats 
 
 def landing_page():
     st.title("BWA/FM-index SNP Caller")
@@ -18,6 +18,18 @@ def landing_page():
     query_file = st.file_uploader(
         "Upload Query FASTQ", type=["fastq", "fq"], key="query_uploader"
     )
+    col1, col2 = st.columns(2)
+    with col1:
+        min_depth = st.slider(
+            "Minimum Depth", min_value=1, max_value=20, value=3, step=1
+        )
+    with col2:
+        min_alt_frac = st.slider(
+            "Minimum Alternate Allele Fraction", min_value=0.0, max_value=1.0, value=0.2, step=0.01
+        )
+
+    st.session_state["min_depth"] = min_depth
+    st.session_state["min_alt_frac"] = min_alt_frac
 
     if st.button("Run Analysis"):
         if reference_file is None or query_file is None:
@@ -43,16 +55,14 @@ def landing_page():
 
         st.info("Mapping reads to reference...")
         start_mapping = time.time()
-        alignments = map_reads(
-            reference_seq, query_reads, fm
-        )
+        alignments = map_reads(reference_seq, query_reads, fm)
         end_mapping = time.time()
         st.session_state["mapping"] = alignments
         st.session_state["runtime_mapping"] = f"{(end_mapping - start_mapping):.2f}"
 
         st.info("Calling SNPs...")
         start_snp = time.time()
-        snp_list = call_snps(alignments, reference_seq)
+        snp_list = call_snps(alignments, reference_seq, min_depth=min_depth, min_alt_frac=min_alt_frac)
         end_snp = time.time()
         st.session_state["results"] = snp_list
         st.session_state["runtime_snp"] = f"{(end_snp - start_snp):.2f}"

@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-def call_snps(alignments, reference, min_depth=3, min_alt_frac=0.2):
+def call_snps(alignments, reference, min_depth, min_alt_frac):
     pileup = defaultdict(lambda: defaultdict(int))
     for aln_list in alignments.values():
         for aln in aln_list:
