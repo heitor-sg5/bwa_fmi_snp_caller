@@ -4,13 +4,18 @@ from .bwt import build_bwt
 from .bwt import build_suffix_array
 
 class FMIndex:
-    def __init__(self, text, sentinel="$", checkpoint_step=16):
+    def __init__(self, text, sentinel="$", checkpoint_step=16, sa_sampling_rate=4):
         if sentinel not in text:
             text += sentinel
         self.sentinel = sentinel
         self.text = text
-        self.sa = build_suffix_array(text)
-        self.bwt = build_bwt(text, self.sa, sentinel=sentinel)
+        self.sa_sampling_rate = sa_sampling_rate
+        full_sa = build_suffix_array(text)
+        self.bwt = build_bwt(text, full_sa, sentinel=sentinel)
+        self.sa_samples = {}
+        for i, sa_val in enumerate(full_sa):
+            if sa_val % sa_sampling_rate == 0:
+                self.sa_samples[i] = sa_val
         self.checkpoint_step = checkpoint_step
         self.first_occurrence = self.build_first_occurrence()
         self.checkpoints = self.build_checkpoints()
@@ -37,34 +42,45 @@ class FMIndex:
             if c not in first_occurrence:
                 first_occurrence[c] = i
         return first_occurrence
-    
+
     def count_symbol(self, symbol, pos):
         if symbol not in self.checkpoints:
             return 0
         if pos <= 0:
             return 0
         pos = min(pos, len(self.bwt))
-        
+
         checkpoints = self.checkpoints[symbol]
         step = self.checkpoint_step
         checkpoint_idx = pos // step
-        
+
         if checkpoint_idx < len(checkpoints):
             checkpoint_pos, checkpoint_count = checkpoints[checkpoint_idx]
         else:
             checkpoint_pos, checkpoint_count = checkpoints[-1]
+
         count = checkpoint_count
-        
         for i in range(checkpoint_pos, pos):
             if self.bwt[i] == symbol:
                 count += 1
-        
         return count
-    
+
+    def lf_mapping(self, pos):
+        c = self.bwt[pos]
+        return self.first_occurrence[c] + self.count_symbol(c, pos)
+
+    def resolve_sa(self, bwt_pos):
+        steps = 0
+        pos = bwt_pos
+        while pos not in self.sa_samples:
+            pos = self.lf_mapping(pos)
+            steps += 1
+        return (self.sa_samples[pos] + steps) % len(self.text)
+
     def search_exact(self, pattern):
         if not pattern:
             return list(range(len(self.text) - 1))
-        
+
         top = 0
         bottom = len(self.bwt) - 1
 
@@ -74,14 +90,14 @@ class FMIndex:
 
             top = self.first_occurrence[symbol] + self.count_symbol(symbol, top)
             bottom = self.first_occurrence[symbol] + self.count_symbol(symbol, bottom + 1) - 1
-            
+
             if top > bottom:
                 return []
-        
+
         result = []
         for i in range(top, bottom + 1):
-            sa_val = self.sa[i]
+            sa_val = self.resolve_sa(i)
             if sa_val < len(self.text) - 1:
                 result.append(sa_val)
-        
+
         return result

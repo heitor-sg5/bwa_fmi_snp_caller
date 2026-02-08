@@ -21,17 +21,3 @@ def call_snps(alignments, reference, min_depth, min_alt_frac):
                 if alt_frac >= min_alt_frac:
                     snps.append((pos, ref_base, alt_base, cnt, depth))
     return snps
-
-def format_snps(reference, snps):
-    snp_dict = defaultdict(lambda: defaultdict(int))
-    for pos, ref, alt, count in snps:
-        snp_dict[pos][ref] = 0
-        snp_dict[pos][alt] = count
-    snp_list = []
-    for pos in sorted(snp_dict.keys()):
-        alleles = snp_dict[pos]
-        ref_base = reference[pos]
-        for alt_base, count in alleles.items():
-            if alt_base != ref_base:
-                snp_list.append((pos, ref_base, alt_base, count))
-    return snp_list
