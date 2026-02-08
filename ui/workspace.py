@@ -49,7 +49,7 @@ def workspace():
                     return "Transition"
                 return "Transversion"
             snp_df["Type"] = snp_df.apply(mutation_type, axis=1)
-            sort_col = st.selectbox("Sort by:", ["Position", "Type"], key="sort_col")
+            sort_col = st.selectbox("Sort by:", ["Position", "Type", "Depth"], key="sort_col")
             sort_order = st.selectbox("Order:", ["Ascending", "Descending"], key="sort_order")
             ascending = sort_order == "Ascending"
             snp_df = snp_df.sort_values(by=sort_col, ascending=ascending)
