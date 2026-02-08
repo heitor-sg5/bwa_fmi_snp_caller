@@ -26,7 +26,7 @@ def calculate_snp_stats(snp_list):
     }
     return stats
 
-def calculate_mapping_stats(alignments, total_reads):
+def calculate_mapping_stats(alignments, total_reads, reference_length):
     mapped_reads = sum(1 for aln_list in alignments.values() if aln_list)
     percent_mapped = (mapped_reads / total_reads) * 100 if total_reads > 0 else 0
 
@@ -35,6 +35,8 @@ def calculate_mapping_stats(alignments, total_reads):
     forward_reverse_ratio = (forward_reads / reverse_reads) if reverse_reads > 0 else None
 
     stats = {
+        "Reference Length": reference_length,
+        "Total Reads": total_reads,
         "Mapped Reads": mapped_reads,
         "Percent Mapped": round(percent_mapped, 2),
         "Forward Strand Reads": forward_reads,

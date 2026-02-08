@@ -70,7 +70,7 @@ def landing_page():
         snp_stats = calculate_snp_stats(snp_list)
         st.session_state["snp_stats"] = snp_stats
 
-        mapping_stats = calculate_mapping_stats(alignments, len(query_reads))
+        mapping_stats = calculate_mapping_stats(alignments, len(query_reads), len(reference_seq))
         st.session_state["mapping_stats"] = mapping_stats
 
         end_snp = time.time()
