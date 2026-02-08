@@ -164,7 +164,7 @@ Pileup-based variant calling:
 
 ## User Interface
 
-1.**Landing Page** (workflow entry):
+1.**Landing Page**:
    - File upload widgets
    - Parameter sliders (min depth, alt fraction)
    - "Run Analysis" button with progress messages
