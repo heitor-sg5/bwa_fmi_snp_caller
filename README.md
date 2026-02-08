@@ -141,7 +141,7 @@ bwt_fmi_snp/
 
 ### BWT & FM-Index (bwt_builder)
 
-- `build_suffix_array()`: Constructs suffix array via prefix doubling ($O(n \log^2 n)$)
+- `build_suffix_array()`: Constructs suffix array via prefix doubling
 - `build_bwt()`: Generates BWT from suffix array
 - `FMIndex`: FM-index with:
   - **Checkpoints** for rank queries (sampling interval: 16)
@@ -192,7 +192,6 @@ Pileup-based variant calling:
 - **BWT Construction**: $O(n \log^2 n)$ where $n$ is reference length
 - **Read Mapping**: $O(m \cdot s)$ per read (m = read length, s = seed count)
 - **SNP Calling**: $O(a)$ where $a$ is total alignments
-- Checkpoint/sampling reduce FM-index query overhead from $O(n)$ to $O(n/\text{checkpoint\_step})$
 
 ## Future Additions
 
