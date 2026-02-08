@@ -25,3 +25,20 @@ def calculate_snp_stats(snp_list):
         "Most Common Alt Alleles": most_common_alt
     }
     return stats
+
+def calculate_mapping_stats(alignments, total_reads):
+    mapped_reads = sum(1 for aln_list in alignments.values() if aln_list)
+    percent_mapped = (mapped_reads / total_reads) * 100 if total_reads > 0 else 0
+
+    forward_reads = sum(1 for aln_list in alignments.values() for aln in aln_list if aln.get("strand") == "+")
+    reverse_reads = sum(1 for aln_list in alignments.values() for aln in aln_list if aln.get("strand") == "-")
+    forward_reverse_ratio = (forward_reads / reverse_reads) if reverse_reads > 0 else None
+
+    stats = {
+        "Mapped Reads": mapped_reads,
+        "Percent Mapped": round(percent_mapped, 2),
+        "Forward Strand Reads": forward_reads,
+        "Reverse Strand Reads": reverse_reads,
+        "Forward/Reverse Ratio": round(forward_reverse_ratio, 2) if forward_reverse_ratio is not None else None
+    }
+    return stats

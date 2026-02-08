@@ -7,7 +7,7 @@ from bwt_builder.fmi import FMIndex
 from bwa_mapper.mapping import map_reads 
 from bwa_mapper.snp import call_snps
 from stats.coverage import compute_coverage
-from stats.summary import calculate_snp_stats 
+from stats.summary import calculate_snp_stats, calculate_mapping_stats
 
 def landing_page():
     st.title("BWA/FM-index SNP Caller")
@@ -63,15 +63,19 @@ def landing_page():
         st.info("Calling SNPs...")
         start_snp = time.time()
         snp_list = call_snps(alignments, reference_seq, min_depth=min_depth, min_alt_frac=min_alt_frac)
-        end_snp = time.time()
-        st.session_state["results"] = snp_list
-        st.session_state["runtime_snp"] = f"{(end_snp - start_snp):.2f}"
-
+        
         coverage = compute_coverage(alignments, len(reference_seq))
         st.session_state["coverage"] = coverage
 
-        stats = calculate_snp_stats(snp_list)
-        st.session_state["stats"] = stats
+        snp_stats = calculate_snp_stats(snp_list)
+        st.session_state["snp_stats"] = snp_stats
+
+        mapping_stats = calculate_mapping_stats(alignments, len(query_reads))
+        st.session_state["mapping_stats"] = mapping_stats
+
+        end_snp = time.time()
+        st.session_state["results"] = snp_list
+        st.session_state["runtime_snp"] = f"{(end_snp - start_snp):.2f}"
 
         st.session_state["view"] = "workspace"
         st.rerun()

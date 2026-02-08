@@ -11,5 +11,6 @@ def ensure_session_defaults():
     st.session_state.setdefault("reference_seq", "")
     st.session_state.setdefault("reference_bwt", "")
     st.session_state.setdefault("query_reads", {})
-    st.session_state.setdefault("stats", {})
+    st.session_state.setdefault("snp_stats", {})
+    st.session_state.setdefault("mapping_stats", {})
     st.session_state.setdefault("coverage", [])
