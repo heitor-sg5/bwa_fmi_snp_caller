@@ -31,31 +31,34 @@ def workspace():
     with stats_col:
         st.subheader("Summary Stats")
 
+        rows = []
+
         snp_stats = st.session_state.get("snp_stats", {})
-        snp_stats_df = pd.DataFrame(snp_stats.items(), columns=["Metric", "Value"])
-        snp_stats_df["Value"] = snp_stats_df["Value"].apply(
-            lambda x: f"{x:.2f}" if isinstance(x, float) else x
-        )
-        st.table(snp_stats_df)
+        for k, v in snp_stats.items():
+            if isinstance(v, float):
+                v = f"{v:.2f}"
+            rows.append({"Metric": k, "Value": v})
 
         mapping_stats = st.session_state.get("mapping_stats", {})
-        if mapping_stats:
-            mapping_stats_df = pd.DataFrame(mapping_stats.items(), columns=["Metric", "Value"])
-            mapping_stats_df["Value"] = mapping_stats_df["Value"].apply(
-                lambda x: f"{x:.2f}" if isinstance(x, float) else (f"{x:.0f}" if isinstance(x, int) else x)
-            )
-        st.table(mapping_stats_df)
+        for k, v in mapping_stats.items():
+            if isinstance(v, float):
+                v = f"{v:.2f}"
+            elif isinstance(v, int):
+                v = f"{v:.0f}"
+            rows.append({"Metric": k, "Value": v})
 
         runtime_stats = {
             "BWT Runtime": st.session_state.get("runtime_bwt", None),
             "Mapping Runtime": st.session_state.get("runtime_mapping", None),
-            "SNP Calling Runtime": st.session_state.get("runtime_snp", None)
+            "SNP Calling Runtime": st.session_state.get("runtime_snp", None),
         }
-        runtime_stats_df = pd.DataFrame(runtime_stats.items(), columns=["Metric", "Value"])
-        runtime_stats_df["Value"] = runtime_stats_df["Value"].apply(
-            lambda x: f"{x:.2f}" if isinstance(x, float) else x
-        )
-        st.table(runtime_stats_df)
+        for k, v in runtime_stats.items():
+            if isinstance(v, float):
+                v = f"{v:.2f}"
+            rows.append({"Metric": k, "Value": v})
+
+        summary_df = pd.DataFrame(rows, columns=["Metric", "Value"])
+        st.table(summary_df)
 
     with snp_col:
         st.subheader("SNP Table")
