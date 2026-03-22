@@ -4,5 +4,5 @@ __pycache__/
 venv/
 *.log
 
-read_simulation.py
+read_sim.py
 ref_input.txt
